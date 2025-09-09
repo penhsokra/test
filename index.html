@@ -1,42 +1,60 @@
 <!DOCTYPE html>
-<html lang="ko" style="background-color: red;">
-<head>
-  <meta charset="UTF-8" />
-  <title>iOS Keyboard Fix with Scroll & Bottom Space</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-  <style>
+<html>
+    <head></head>
+    <style>
 
-  </style>
-  <script>
+body { 
+    padding: 120px 0 50px 0; 
+} 
+.header { 
+    position: fixed; 
+    height: 100px; 
+    width: 100%; 
+    top: 0; 
+    z-index: 1000; 
+    background: #bada55; 
+} 
+.footer { 
+    position: fixed; 
+    height: 30px; 
+    width: 100%; 
+    bottom: 0; 
+    z-index: 1000; 
+    background: #facade; 
+} 
+.fixfixed .header, 
+.fixfixed .footer { 
+    position: absolute; 
+} 
 
-$(function() {    
-    if (/ipad|iphone/gi.test(window.navigator.userAgent)) {
-    var events = "abort blur focus input scroll submit touchstart touchmove";
-    $("form, input").on(events, function(e) {
-return (function(window, elem, w, h) {
-var vh = window.getComputedStyle(elem,null).getPropertyValue(h);
-var vw = window.getComputedStyle(elem,null).getPropertyValue(w);
-    var vwh = {"documentWidth": vw, "documentHeight": vh, "windowInnerWidth": window.innerWidth, "windowInnerHeight": window.innerHeight};
-console.log(vwh);
-var _vwh = document.getElementById("vwh");
-    _vwh.innerHTML = JSON.stringify(vwh)
-return vwh  
-}(window, document.documentElement, "width", "height"));
-    }).focus();
-    };
-})
+    </style>
+    <script>
+/* we need this only on touch devices */
+$(function() {
+      var $body;
+      if (Modernizr.touch) {
+        $body = $("body");
+        document.addEventListener('focusin', function() {
+          return $body.addClass("fixfixed");
+        });
+        return document.addEventListener('focusout', function() {
+          $body.removeClass("fixfixed");
+          return setTimeout(function() {
+            return $(window).scrollLeft(0);
+          }, 20);
+        });
+      }
+    });
 
-  </script>
-</head>
-<body>
-  <header>차감 신청</header>
-  <div class="wrap" style="height: 200px;">
-    <p>키보드가 열릴 때 아래 버튼이 가려지지 않고, 빈 공간 없이 스크롤 되어야 합니다.</p>
-    <input type="text" placeholder="텍스트 입력 1" />
-  </div>
-  <div class="btn-floating-sticky" style="position:fixed;bottom: 0;left: 0;right: 0;height: 50px;background-color: green;">하단 고정 버튼</div>
-</body>
+
+    </script>
+    <body>
+        <div class="header">Header</div>
+        <div class="container">
+            <form action="">
+                <label>Testfield: <input type="text" /></label>
+            </form>
+        </div>
+        <div class="footer">Footer</div>
+    </body>
 </html>
-
-
-
