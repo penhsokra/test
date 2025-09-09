@@ -1,81 +1,59 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>iOS Keyboard Fix with Scroll & Bottom Space</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: red;
-      font-family: sans-serif;
-      overflow-x: hidden; /* prevent sideways shift */
-    }
-    header {
-      padding: 1rem;
-      background: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .wrap {
-      padding: 1rem;
-      padding-bottom: 80px; /* keep space for button */
-    }
-    input {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      font-size: 16px;
-    }
-    .btn-sticky {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 50px;
-      background-color: green;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      transition: transform 0.2s;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Safari Input Fix</title>
+<style>
+  html, body {
+    height: 100dvh; /* dynamic viewport height for iOS Safari */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px;
+  }
+
+  input, textarea {
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px; /* prevents iOS zoom */
+  }
+</style>
 </head>
 <body>
-  <header>차감 신청</header>
-  <div class="wrap">
-    <p>키보드가 열릴 때 아래 버튼이 가려지지 않고, 빈 공간 없이 스크롤 되어야 합니다.</p>
-    <input type="text" placeholder="텍스트 입력 1" />
-    <input type="text" placeholder="텍스트 입력 2" />
-    <input type="text" placeholder="텍스트 입력 3" />
-  </div>
-  <div class="btn-sticky">하단 고정 버튼</div>
+<div class="container">
+  <input type="text" placeholder="Name">
+  <input type="email" placeholder="Email">
+  <textarea placeholder="Message"></textarea>
+  <input type="text" placeholder="Another input">
+</div>
 
-  <script>
-    const btn = document.querySelector('.btn-sticky');
+<script>
+  // Scroll input into view when focused
+  document.querySelectorAll('input, textarea').forEach(input => {
+    input.addEventListener('focus', () => {
+      setTimeout(() => {
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300); // allow keyboard to open
+    });
 
-    function updateBtnPosition() {
-      const vv = window.visualViewport;
-      if (!vv) return;
+    // Reset scroll when input loses focus
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 300); // allow keyboard to close
+    });
+  });
 
-      // Calculate how much space keyboard took
-      const offset = (window.innerHeight - vv.height - vv.offsetTop);
-
-      // Translate button so it follows the visible screen bottom
-      btn.style.transform = `translateY(-${offset}px)`;
-    }
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', updateBtnPosition);
-      window.visualViewport.addEventListener('scroll', updateBtnPosition);
-      updateBtnPosition();
-    }
-  </script>
+  // Optional: prevent overscroll/bounce
+  document.body.style.overscrollBehavior = 'contain';
+</script>
 </body>
 </html>
