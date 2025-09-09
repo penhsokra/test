@@ -1,55 +1,77 @@
 <!DOCTYPE html>
-<html>
-    <head></head>
-    <style>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>iOS Keyboard Fix with Scroll & Bottom Space</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <style>
+    body {
+      margin: 0;
+      background: red;
+      font-family: sans-serif;
+    }
+    header {
+      padding: 1rem;
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .wrap {
+      padding: 1rem;
+      padding-bottom: 80px; /* 버튼 영역 확보 */
+    }
+    input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    .btn-sticky {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 50px;
+      background-color: green;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: bottom 0.2s;
+      padding-bottom: env(safe-area-inset-bottom); /* iPhone 홈바 대응 */
+    }
+  </style>
+</head>
+<body>
+  <header>차감 신청</header>
+  <div class="wrap">
+    <p>키보드가 열릴 때 아래 버튼이 가려지지 않고, 빈 공간 없이 스크롤 되어야 합니다.</p>
+    <input type="text" placeholder="텍스트 입력 1" />
+    <input type="text" placeholder="텍스트 입력 2" />
+    <input type="text" placeholder="텍스트 입력 3" />
+  </div>
+  <div class="btn-sticky">하단 고정 버튼</div>
 
-body { 
-    padding: 120px 0 50px 0; 
-} 
-.header { 
-    position: fixed; 
-    height: 100px; 
-    width: 100%; 
-    top: 0; 
-    z-index: 1000; 
-    background: #bada55; 
-} 
-.footer { 
-    position: fixed; 
-    height: 30px; 
-    width: 100%; 
-    bottom: 0; 
-    z-index: 1000; 
-    background: #facade; 
-} 
-.fixfixed .header, 
-.fixfixed .footer { 
-    position: absolute; 
-} 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-}
-    </style>
+  <script>
+    const btn = document.querySelector('.btn-sticky');
 
-    <body>
-        <div class="container">
-            <form action="">
-                <label>Testfield: <input type="text" style="height: 60px;background-color: red;"/></label>
-            </form>
-        </div>
-        <div class="footer">Footer</div>
-    </body>
+    function updateBtnPosition() {
+      const vv = window.visualViewport;
+      if (!vv) return;
+
+      // 버튼이 visual viewport의 하단에 붙도록 보정
+      const offset = window.innerHeight - vv.height - vv.offsetTop;
+      btn.style.bottom = offset + 'px';
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateBtnPosition);
+      window.visualViewport.addEventListener('scroll', updateBtnPosition);
+      updateBtnPosition();
+    }
+  </script>
+</body>
 </html>
