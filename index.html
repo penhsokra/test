@@ -5,10 +5,13 @@
   <title>iOS Keyboard Fix with Scroll & Bottom Space</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <style>
-    body {
+    html, body {
+      height: 100%;
       margin: 0;
+      padding: 0;
       background: red;
       font-family: sans-serif;
+      overflow-x: hidden; /* prevent sideways shift */
     }
     header {
       padding: 1rem;
@@ -19,7 +22,7 @@
     }
     .wrap {
       padding: 1rem;
-      padding-bottom: 80px; /* 버튼 영역 확보 */
+      padding-bottom: 80px; /* keep space for button */
     }
     input {
       display: block;
@@ -40,8 +43,7 @@
       align-items: center;
       justify-content: center;
       z-index: 100;
-      transition: bottom 0.2s;
-      padding-bottom: env(safe-area-inset-bottom); /* iPhone 홈바 대응 */
+      transition: transform 0.2s;
     }
   </style>
 </head>
@@ -62,9 +64,11 @@
       const vv = window.visualViewport;
       if (!vv) return;
 
-      // 버튼이 visual viewport의 하단에 붙도록 보정
-      const offset = window.innerHeight - vv.height - vv.offsetTop;
-      btn.style.bottom = offset + 'px';
+      // Calculate how much space keyboard took
+      const offset = (window.innerHeight - vv.height - vv.offsetTop);
+
+      // Translate button so it follows the visible screen bottom
+      btn.style.transform = `translateY(-${offset}px)`;
     }
 
     if (window.visualViewport) {
